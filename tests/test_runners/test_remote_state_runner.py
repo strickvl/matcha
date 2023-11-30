@@ -36,13 +36,12 @@ def expected_bucket_config() -> dict:
     Returns:
         dict: the expected output
     """
-    outputs = {
+    return {
         "remote_state_storage": {
             "account_name": "test_account_name",
             "container_name": "test_container_name",
         }
     }
-    return outputs
 
 
 @pytest.fixture

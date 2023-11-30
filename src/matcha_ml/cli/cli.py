@@ -114,10 +114,12 @@ def destroy() -> None:
 @app.command()
 def force_unlock() -> None:
     """Force unlock remote matcha state on Azure."""
-    delete = typer.confirm("Are you sure you want to remove the lock forcefully?")
-    if not delete:
+    if delete := typer.confirm(
+        "Are you sure you want to remove the lock forcefully?"
+    ):
+        core.remove_state_lock()
+    else:
         raise typer.Exit()
-    core.remove_state_lock()
 
 
 def version_callback(value: bool) -> None:

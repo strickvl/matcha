@@ -50,17 +50,18 @@ def expected_outputs() -> dict:
     Returns:
         dict: expected output
     """
-    outputs = {
+    return {
         "cloud": {"flavor": "azure", "resource-group-name": "test_resources"},
         "container-registry": {
             "flavor": "azure",
             "registry-name": "azure_registry_name",
             "registry-url": "azure_container_registry",
         },
-        "experiment-tracker": {"flavor": "mlflow", "tracking-url": "mlflow_test_url"},
+        "experiment-tracker": {
+            "flavor": "mlflow",
+            "tracking-url": "mlflow_test_url",
+        },
     }
-
-    return outputs
 
 
 @pytest.fixture(autouse=True)
@@ -96,8 +97,7 @@ def mock_azure_storage_instance() -> Iterator[MagicMock]:
     """
     class_stub = "matcha_ml.state.remote_state_manager.AzureStorage"
     with mock.patch(class_stub) as mock_azure_storage:
-        mock_azure_storage_instance = mock_azure_storage.return_value
-        yield mock_azure_storage_instance
+        yield mock_azure_storage.return_value
 
 
 @pytest.fixture

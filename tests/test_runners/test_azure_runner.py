@@ -55,7 +55,7 @@ def expected_outputs_show_sensitive() -> Dict[str, Dict[str, str]]:
     Returns:
         dict: expected output
     """
-    outputs = {
+    return {
         "cloud": {
             "flavor": "azure",
             "resource-group-name": "random-resources",
@@ -83,8 +83,6 @@ def expected_outputs_show_sensitive() -> Dict[str, Dict[str, str]]:
         "id": {"matcha_uuid": "matcha_id_test_value"},
     }
 
-    return outputs
-
 
 @pytest.fixture
 def expected_outputs_hide_sensitive() -> dict:
@@ -93,7 +91,7 @@ def expected_outputs_hide_sensitive() -> dict:
     Returns:
         dict: expected output
     """
-    outputs = {
+    return {
         "cloud": {
             "flavor": "azure",
             "resource-group-name": "random-resources",
@@ -122,7 +120,6 @@ def expected_outputs_hide_sensitive() -> dict:
         "prefix": "random",
         "location": "uksouth",
     }
-    return outputs
 
 
 @pytest.fixture

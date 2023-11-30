@@ -16,8 +16,7 @@ def mock_remote_state_manager() -> Iterable[MagicMock]:
         MagicMock: mock of an RemoteStateManager instance
     """
     with patch("matcha_ml.cli.destroy.RemoteStateManager") as mock_state_manager_class:
-        mock_state_manager = mock_state_manager_class.return_value
-        yield mock_state_manager
+        yield mock_state_manager_class.return_value
 
 
 def test_cli_destroy_command_help(runner):

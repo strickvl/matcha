@@ -130,11 +130,11 @@ class AzureRunner(BaseRunner):
         with open(self.state_file) as f:
             state_file_data = json.load(f)
 
-        updated_state_file_data = {}
-        for key, value in state_file_data.items():
-            if key in ["cloud", "id"]:
-                updated_state_file_data[key] = value
-
+        updated_state_file_data = {
+            key: value
+            for key, value in state_file_data.items()
+            if key in ["cloud", "id"]
+        }
         self._update_state_file(updated_state_file_data)
 
     def provision(self) -> None:

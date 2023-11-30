@@ -52,14 +52,13 @@ def expected_matcha_config() -> Dict[str, Dict[str, str]]:
     Returns:
         Dict[str, Dict[str, str]]: the expected matcha configuration.
     """
-    config = {
+    return {
         "remote_state_bucket": {
             "account_name": "test-account",
             "container_name": "test-container",
             "resource_group_name": "test-rg",
         }
     }
-    return config
 
 
 @pytest.fixture
@@ -110,8 +109,7 @@ def mock_azure_storage_instance() -> Iterator[MagicMock]:
     """
     class_stub = "matcha_ml.state.remote_state_manager.AzureStorage"
     with patch(class_stub) as mock_azure_storage:
-        mock_azure_storage_instance = mock_azure_storage.return_value
-        yield mock_azure_storage_instance
+        yield mock_azure_storage.return_value
 
 
 def assert_infrastructure(

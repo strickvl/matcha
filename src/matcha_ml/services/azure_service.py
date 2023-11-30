@@ -75,8 +75,7 @@ class AzureClient:
         Returns:
             str: the subscription id.
         """
-        subscriptions = self._client.subscriptions.list()
-        if subscriptions:
+        if subscriptions := self._client.subscriptions.list():
             return str(list(subscriptions)[0].subscription_id)
         else:
             raise MatchaAuthenticationError(
@@ -99,9 +98,7 @@ class AzureClient:
             options={"verify_signature": False},
             algorithms=["RS256"],
         )
-        user_object_id = cast(str, decoded_token["oid"])
-
-        return user_object_id
+        return cast(str, decoded_token["oid"])
 
     def _fetch_user_roles(self) -> List[str]:
         """Fetch the Azure roles for the user.
@@ -126,13 +123,11 @@ class AzureClient:
                 "Error - unable to get a response from Azure, make sure you have a stable connection."
             )
 
-        roles = [
+        return [
             str(x.role_definition_id)
             for x in role_assignments
             if x.principal_id == principal_id
         ]
-
-        return roles
 
     def _check_required_role_assignments(self) -> bool:
         """Check if the user has one of the required sets of roles.
@@ -148,7 +143,7 @@ class AzureClient:
                 f"/subscriptions/{self.subscription_id}/providers/Microsoft.Authorization/roleDefinitions/{ROLE_ID_MAPPING[role]}"
                 for role in role_configuration
             ]
-            if all([role in self._fetch_user_roles() for role in expected_roles]):
+            if all(role in self._fetch_user_roles() for role in expected_roles):
                 return True
 
         raise MatchaPermissionError(
@@ -161,9 +156,7 @@ class AzureClient:
         Returns:
             Dict[str, ResourceGroup]: A dictionary with resource group name as the key its corresponding object
         """
-        if self._resource_groups:
-            return self._resource_groups
-        else:
+        if not self._resource_groups:
             self._resource_client = ResourceManagementClient(
                 self._credential, str(self.subscription_id)
             )
@@ -171,7 +164,7 @@ class AzureClient:
                 rg.name: rg for rg in self._resource_client.resource_groups.list()
             }
 
-            return self._resource_groups
+        return self._resource_groups
 
     def fetch_storage_access_key(
         self, resource_group_name: str, storage_account_name: str
@@ -270,16 +263,14 @@ class AzureClient:
         Returns:
             set[str]: the set of all Azure regions.
         """
-        if self._regions:
-            return self._regions
-        else:
+        if not self._regions:
             self._regions = {
                 region.name
                 for region in self._client.subscriptions.list_locations(
                     self.subscription_id
                 )
             }
-            return self._regions
+        return self._regions
 
     def is_valid_region(self, region: str) -> bool:
         """Check whether the user inputted region is valid.

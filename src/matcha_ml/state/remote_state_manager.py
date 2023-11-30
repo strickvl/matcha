@@ -166,12 +166,11 @@ class RemoteStateManager:
         if not self._resource_group_exists():
             return False
 
-        if not self._bucket_exists(
-            self.configuration.remote_state_bucket.container_name
-        ):
-            return False
-
-        return True
+        return bool(
+            self._bucket_exists(
+                self.configuration.remote_state_bucket.container_name
+            )
+        )
 
     def is_state_stale(self) -> bool:
         """Check if remote state has been destroyed.

@@ -115,15 +115,12 @@ def region_validation(region: str) -> str:
 
     if azure_client.is_valid_region(region):
         return region
+    if closest := find_closest_matches(region, azure_client.fetch_regions()):
+        raise MatchaInputError(
+            f"A region named '{region}' does not exist. Did you mean '{closest[0]}'?"
+        )
     else:
-        closest = find_closest_matches(region, azure_client.fetch_regions())
-
-        if closest:
-            raise MatchaInputError(
-                f"A region named '{region}' does not exist. Did you mean '{closest[0]}'?"
-            )
-        else:
-            raise MatchaInputError(f"A region named '{region}' does not exist.")
+        raise MatchaInputError(f"A region named '{region}' does not exist.")
 
 
 def region_typer_callback(region: str) -> str:
@@ -226,24 +223,22 @@ def check_current_deployment_exists() -> bool:
     with open(MATCHA_STATE_PATH) as f:
         data = json.load(f)
 
-    # Check if a resource group name prefix is present in matcha.state file
-    if data.get("cloud") is not None and "prefix" in data.get("cloud"):
-        resource_group_name = data["cloud"]["prefix"] + "-resources"
-
-        client = get_azure_client()
-        rg_state = client.resource_group_state(resource_group_name)
-
-        if rg_state is None:
-            return False
-        elif rg_state == ProvisionState.SUCCEEDED:
-            return True
-        else:
-            print_error(
-                f"Error, resource group '{resource_group_name}' is currently in the state '{rg_state.value}' which is currently not handled by matcha. Please check your resources on Azure."
-            )
-            return True
-    else:
+    if data.get("cloud") is None or "prefix" not in data.get("cloud"):
         return False
+    resource_group_name = data["cloud"]["prefix"] + "-resources"
+
+    client = get_azure_client()
+    rg_state = client.resource_group_state(resource_group_name)
+
+    if rg_state is None:
+        return False
+    elif rg_state == ProvisionState.SUCCEEDED:
+        return True
+    else:
+        print_error(
+            f"Error, resource group '{resource_group_name}' is currently in the state '{rg_state.value}' which is currently not handled by matcha. Please check your resources on Azure."
+        )
+        return True
 
 
 def get_command_validation(argument: str, valid_options: List[str], noun: str) -> None:
@@ -260,9 +255,7 @@ def get_command_validation(argument: str, valid_options: List[str], noun: str) -
     if argument not in valid_options:
         err_msg = f"Error - a {noun} with the name '{argument}' does not exist."
 
-        closest = find_closest_matches(argument, valid_options, 1)
-
-        if closest:
+        if closest := find_closest_matches(argument, valid_options, 1):
             err_msg += f" Did you mean '{closest[0]}'?"
 
         raise MatchaInputError(err_msg)

@@ -63,7 +63,7 @@ def expected_output_lines() -> List[str]:
     Returns:
         List[str]: expected output with sensitive value hidden
     """
-    output_lines = [
+    return [
         "Pipeline",
         "- flavor: zenml",
         "- connection-string: ********",
@@ -74,8 +74,6 @@ def expected_output_lines() -> List[str]:
         "- tracking-url: mlflow_test_url",
     ]
 
-    return output_lines
-
 
 @pytest.fixture
 def expected_outputs_json() -> Dict[str, Dict[str, str]]:
@@ -84,17 +82,18 @@ def expected_outputs_json() -> Dict[str, Dict[str, str]]:
     Returns:
         dict: expected output with sensitive value hidden in JSON output format
     """
-    outputs = {
+    return {
         "pipeline": {
             "flavor": "zenml",
             "connection-string": "********",
             "server-password": "********",
             "server-url": "zen_server_url",
         },
-        "experiment-tracker": {"flavor": "mlflow", "tracking-url": "mlflow_test_url"},
+        "experiment-tracker": {
+            "flavor": "mlflow",
+            "tracking-url": "mlflow_test_url",
+        },
     }
-
-    return outputs
 
 
 @pytest.fixture
@@ -106,7 +105,7 @@ def expected_output_lines_yaml() -> List[str]:
     Returns:
         List[str]: expected output with sensitive value hidden in yaml output format
     """
-    output_lines = [
+    return [
         "experiment-tracker:",
         "flavor: mlflow",
         "tracking-url: mlflow_test_url",
@@ -116,8 +115,6 @@ def expected_output_lines_yaml() -> List[str]:
         "server-password: '********'",
         "server-url: zen_server_url",
     ]
-
-    return output_lines
 
 
 def test_cli_get_command_help(runner: CliRunner):

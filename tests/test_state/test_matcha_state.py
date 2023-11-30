@@ -51,17 +51,18 @@ def expected_outputs() -> dict:
     Returns:
         dict: expected output
     """
-    outputs = {
+    return {
         "cloud": {"flavor": "azure", "resource-group-name": "test_resources"},
         "container-registry": {
             "flavor": "azure",
             "registry-name": "azure_registry_name",
             "registry-url": "azure_container_registry",
         },
-        "experiment-tracker": {"flavor": "mlflow", "tracking-url": "mlflow_test_url"},
+        "experiment-tracker": {
+            "flavor": "mlflow",
+            "tracking-url": "mlflow_test_url",
+        },
     }
-
-    return outputs
 
 
 def test_state_file_getter(

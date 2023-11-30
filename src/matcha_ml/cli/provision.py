@@ -77,9 +77,7 @@ def provision_resources(
         typer.Exit: if approval for removing a stale state is not given by user.
     """
     remote_state_manager = RemoteStateManager()
-    is_provisioned = remote_state_manager.is_state_provisioned()
-
-    if is_provisioned:
+    if is_provisioned := remote_state_manager.is_state_provisioned():
         print_status(
             build_warning_status(
                 "WARNING - Matcha has detected that there are resources already provisioned. Use 'matcha destroy' to remove the existing resources before trying to provision again."
@@ -87,12 +85,11 @@ def provision_resources(
         )
         raise typer.Exit()
 
-    if not is_provisioned:
-        location, prefix, _ = fill_provision_variables(
-            location=location, prefix=prefix, password="temp"
-        )
+    location, prefix, _ = fill_provision_variables(
+        location=location, prefix=prefix, password="temp"
+    )
 
-        remote_state_manager.provision_remote_state(location, prefix)
+    remote_state_manager.provision_remote_state(location, prefix)
 
     with remote_state_manager.use_lock(), remote_state_manager.use_remote_state():
         # create a runner for provisioning resource with Terraform service.
